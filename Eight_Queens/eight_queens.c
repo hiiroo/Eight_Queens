@@ -1,6 +1,6 @@
 //  eight_queens.c
 //  Eight_Queens
-//
+//  UNSTABLE
 //  Created by Mert on 6/13/14.
 //  Copyright (c) 2014 SL. All rights reserved.
 //

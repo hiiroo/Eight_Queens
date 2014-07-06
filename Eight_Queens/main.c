@@ -1,7 +1,7 @@
 //
 //  main.c
 //  Eight_Queens
-//  Initial test.
+//  UNSTABLE
 //  Created by Mert on 6/13/14.
 //  Copyright (c) 2014 SL. All rights reserved.
 //
