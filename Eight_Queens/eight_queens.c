@@ -388,7 +388,7 @@ void mutation(PARENT p){
     srand((int)time(NULL));
     
     int psize = p->size, i, val1, val2;
-    for (i = 0; i < psize*MUTATIONCOEF; i++) {
+    for (i = 0; i < psize*MUTATIONRATE; i++) {
         
         val1 = (rand() % POPLIMIT);
         val2 = (rand() % POPLIMIT);
