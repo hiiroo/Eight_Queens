@@ -5,7 +5,7 @@
 //  Copyright (c) 2014 SL. All rights reserved.
 //
 
- 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -21,7 +21,7 @@ PARENT init_parent(int size){
 }
 
 POPULATION init_population(int size){
-
+    
     int i;
     
     POPULATION temp = malloc(sizeof(POPULATION_t));
@@ -37,11 +37,11 @@ POPULATION init_population(int size){
 
 void free_population(POPULATION p){
     int k, popsize = p->size;
-
+    
     for (k = 0; k < popsize; k++) {
         PARENT temp = p->pop[k];
         if (temp != NULL) {
-//            free(temp->positions);
+            free(temp->positions);
             free(temp);
         }
     }
@@ -70,7 +70,7 @@ void create_random_population(POPULATION p){
         }
         temp->matchrate = evaluate(temp);
     }
-
+    
 }
 
 void remove_replication(PARENT p){
@@ -81,17 +81,17 @@ void remove_replication(PARENT p){
     int isMissing = 0;
     
     do {
-
+        
         isMissing = 0;
         //for x
         for (i = 0; i < mapsize; i++) {
             mapx[i] = 0;
         }
-    
+        
         for (i = 0; i < p->size; i++) {
             mapx[p->positions[i]->x]++;
         }
-    
+        
         for (i = 1; i < mapsize; i++) {
             if(mapx[i] == 0){
                 temp1 = i;
@@ -101,7 +101,7 @@ void remove_replication(PARENT p){
                 isMissing = 1;
             }
         }
-    
+        
         if (isMissing == 1) {
             for (i = 0; i < p->size; i++) {
                 if(p->positions[i]->x == temp2){
@@ -113,18 +113,18 @@ void remove_replication(PARENT p){
     } while (isMissing == 1);
     
     do{
-    
+        
         //for y
         isMissing = 0;
-    
+        
         for (i = 0; i < mapsize; i++) {
             mapy[i] = 0;
         }
-    
+        
         for (i = 0; i < p->size; i++) {
             mapy[p->positions[i]->y]++;
         }
-    
+        
         for (i = 1; i < mapsize; i++) {
             if(mapy[i] == 0){
                 temp1 = i;
@@ -134,7 +134,7 @@ void remove_replication(PARENT p){
                 isMissing = 1;
             }
         }
-    
+        
         if (isMissing == 1) {
             for (i = 0; i < p->size; i++) {
                 if(p->positions[i]->y == temp2){
@@ -143,16 +143,16 @@ void remove_replication(PARENT p){
                 }
             }
         }
-    
-    }while (isMissing == 1);
         
+    }while (isMissing == 1);
+    
 }
 
 int evaluate(PARENT p){
     int matchrate = 0;
     int size = p->size, i,k;
     int bitmap[POPLIMIT+1][POPLIMIT+1];
-
+    
     //Zero bitmap
     for(i = 0; i < (POPLIMIT+1); i++){
     	for(k = 0; k < (POPLIMIT+1); k++){
@@ -160,7 +160,7 @@ int evaluate(PARENT p){
     	}
     }
     //
-
+    
     //Fill bitmap
     for(k = 0; k < size; k++){
     	bitmap[p->positions[k]->x][p->positions[k]->y] = 1;
@@ -168,7 +168,7 @@ int evaluate(PARENT p){
     //
     
     if(EVALUATEDEBUGMODE == 1){
-    //Print bitmap
+        //Print bitmap
     	for(i = 1; i <= size; i++) {
     		for(k = 1; k <= size; k++){
     			printf("%d ", bitmap[i][k]);
@@ -177,10 +177,10 @@ int evaluate(PARENT p){
     	}
     	//
     }
-
+    
     //Check horizontal and vertical axis for collisions
     int bincnt = 0;
-
+    
     for(i = 0; i < size ; i++){
     	for(k = 0; k < size; k++){
     		bincnt = bincnt + bitmap[i][k];
@@ -191,19 +191,18 @@ int evaluate(PARENT p){
     		}
     		matchrate++;
     	}
-//    	else if(bincnt < 1){
-//    		matchrate++;
-//    	}
+        //    	else if(bincnt < 1){
+        //    		matchrate++;
+        //    	}
     	bincnt = 0;
     }
     //
-
+    
     bincnt = 0;
     int x,y;
     for(x = POPLIMIT; x >= 1; x--){
     	int tempx = x;
     	int tempy = 1;
-//    	int y;
     	for(y = x; y <= POPLIMIT; y++){
     		if(bitmap[tempx][tempy] == 1){
     			bincnt++;
@@ -222,13 +221,12 @@ int evaluate(PARENT p){
     	}
     	bincnt = 0;
     }
+    
     //other half
     bincnt = 0;
-//    int y;
     for(y = 2; y <= POPLIMIT; y++){
     	int tempx = 1;
     	int tempy = y;
-//    	int x;
     	for(x = y; x <= POPLIMIT; x++){
     		if(bitmap[tempx][tempy] == 1){
     			bincnt++;
@@ -247,9 +245,9 @@ int evaluate(PARENT p){
     	}
     	bincnt = 0;
     }
-
+    
     //*************************
-
+    
     bincnt = 0;
     for(y = 1; y <= POPLIMIT; y++){
     	int tempx = 1;
@@ -272,7 +270,7 @@ int evaluate(PARENT p){
     	}
     	bincnt = 0;
     }
-
+    
     bincnt = 0;
     for(x = POPLIMIT; x >= 1; x--){
     	int tempx = x;
@@ -295,9 +293,9 @@ int evaluate(PARENT p){
     	}
     	bincnt = 0;
     }
-
-
-
+    
+    
+    
     return matchrate;
 }
 
@@ -333,7 +331,7 @@ int population_sum(POPULATION p){
 }
 
 double population_average(POPULATION p){
-
+    
     int sum = 0;
     int size = p->size, i;
     PARENT tpar;
@@ -365,13 +363,13 @@ PARENT population_minimumrate(POPULATION p){
     int min, i;
     PARENT tpar = p->pop[0];
     min = tpar->matchrate;
-
+    
     for (i = 0; i < p->size; i++) {
         if (p->pop[i]->matchrate < min) {
             min = p->pop[i]->matchrate;
             tpar = p->pop[i];
         }
-
+        
     }
     return tpar;
 }
@@ -405,7 +403,7 @@ void mutation(PARENT p){
         p->positions[(rand() % p->size)]->x = val1;
         p->positions[(rand() % p->size)]->y = val2;
     }
-
+    
     if(MUTATIONREMOVEREPLICATION == 1){
     	remove_replication(p);
     }
@@ -413,7 +411,7 @@ void mutation(PARENT p){
 }
 
 void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2){
-
+    
     srand((int)time(NULL));
     
     int cut, i, size = p1->size;
@@ -436,12 +434,12 @@ void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2){
     for (i = cut; i < size; i++) {
         child2->positions[i] = p1->positions[i];
     }
-
+    
     if(CROSSOVERREMOVEREPLICATION == 1){
     	remove_replication(child1);
     	remove_replication(child2);
     }
-
+    
     child1->matchrate = evaluate(child1);
     child2->matchrate = evaluate(child2);
 }
@@ -466,7 +464,7 @@ void environment(POPULATION population){
             PARENT tempmax = NULL;
             //Tournament Selection Part
             tempmax = population_maximum((POPULATION)tournamentpool);
-
+            
             tpar1 = population_minimumrate((POPULATION)tournamentpool);
             
             int p, min = 0;
@@ -476,7 +474,7 @@ void environment(POPULATION population){
                 }
             }
             //end
-
+            
             PARENT child1 = NULL;
             PARENT child2 = NULL;
             
@@ -484,7 +482,7 @@ void environment(POPULATION population){
             child2 = init_parent(POPLIMIT);
             
             crossover(tpar1, tpar2, child1, child2);
-
+            
             int rate1 = child1->matchrate;
             int rate2 = child2->matchrate;
             
@@ -497,7 +495,7 @@ void environment(POPULATION population){
             		mutation(child1);
             	}
             }
-
+            
             if (rate2 < MIN) {
                 MIN = rate2;
                 print_parent(child2);
@@ -525,9 +523,9 @@ void environment(POPULATION population){
         }
         popaverage = population_average(temppop);
         
-//        printf("Population Maximum:%d\n", population_minimumrate(population)->matchrate);
+        //        printf("Population Maximum:%d\n", population_minimumrate(population)->matchrate);
         printf("GENERATION: %d - POPULATION AVERAGE: %f\n", gencount,population_average(population));
-
+        
         free_population(population);
         population = temppop;
         gencount++;

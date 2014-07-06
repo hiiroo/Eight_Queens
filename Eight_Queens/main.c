@@ -20,21 +20,23 @@ int main()
     
     environment(population);
     
-//    int i;
-//    int ref[8][2] = {{8,4}, {7,7}, {6,3}, {5,8}, {4,2}, {3,5}, {2,1}, {1, 6}};
-//    int ref[8][2] = {{8,6}, {7,4}, {6,7}, {5,1}, {4,8}, {3,2}, {2,5}, {1, 3}};
-//    int ref[8][2] = {{8,5}, {7,7}, {6,1}, {5,3}, {4,8}, {3,6}, {2,4}, {1, 2}};
-
-//    PARENT test = init_parent(POPLIMIT);
-
-//    for (i = 0; i < test->size; i++) {
-//    	test->positions[i] = malloc(sizeof(POS_t));
-//    	test->positions[i]->x = ref[i][0];
-//    	test->positions[i]->y = ref[i][1];
-//    }
-
-//    printf("%d\n", evaluate(test));
-
+    /*
+     int i;
+     int ref[8][2] = {{8,4}, {7,7}, {6,3}, {5,8}, {4,2}, {3,5}, {2,1}, {1, 6}};
+     int ref[8][2] = {{8,6}, {7,4}, {6,7}, {5,1}, {4,8}, {3,2}, {2,5}, {1, 3}};
+     int ref[8][2] = {{8,5}, {7,7}, {6,1}, {5,3}, {4,8}, {3,6}, {2,4}, {1, 2}};
+     
+     PARENT test = init_parent(POPLIMIT);
+     
+     for (i = 0; i < test->size; i++) {
+     test->positions[i] = malloc(sizeof(POS_t));
+     test->positions[i]->x = ref[i][0];
+     test->positions[i]->y = ref[i][1];
+     }
+     
+     printf("%d\n", evaluate(test));
+     */
+    
     free_population(population);
     return 0;
 }

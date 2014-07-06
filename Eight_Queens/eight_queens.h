@@ -12,7 +12,7 @@
 
 #define EVALUATEDEBUGMODE 0//Debug mode
 #define POPLIMIT 8//Size of points that every parent contains
-#define POPULATION_SIZE 10//Size of population
+#define POPULATION_SIZE 15//Size of population
 #define TOURNAMENTSIZE 4//size of tournament for selection
 #define SUCCESS 0//Defined successful evaluation value
 #define EXPECTATION 0//Expectation
