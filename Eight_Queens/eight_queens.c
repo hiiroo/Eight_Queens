@@ -522,7 +522,7 @@ void environment(POPULATION population){
             temppop->pop[i+1] = child2;
         }
         popaverage = population_average(temppop);
-        
+         
         //        printf("Population Maximum:%d\n", population_minimumrate(population)->matchrate);
         printf("GENERATION: %d - POPULATION AVERAGE: %f\n", gencount,population_average(population));
         
