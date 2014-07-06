@@ -41,7 +41,7 @@ void free_population(POPULATION p){
     for (k = 0; k < popsize; k++) {
         PARENT temp = p->pop[k];
         if (temp != NULL) {
-            free(temp->positions);
+//            free(temp->positions);
             free(temp);
         }
     }
