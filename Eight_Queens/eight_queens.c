@@ -40,7 +40,7 @@ void free_population(POPULATION p){
     
     for (k = 0; k < popsize; k++) {
         PARENT temp = p->pop[k];
-        if (temp != NULL) {
+        if (sizeof(temp) > sizeof(PARENT_t)) {
             free(temp->positions);
             free(temp);
         }
@@ -415,24 +415,31 @@ void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2){
     srand((int)time(NULL));
     
     int cut, i, size = p1->size;
+    double localcrsvrrate = rand() % 1;
     
-    cut = rand() % size;
+    if (CROSSOVERRATE > localcrsvrrate) {
     
+        cut = rand() % size;
     
-    for (i = 0; i < cut; i++) {
-        child1->positions[i] = p1->positions[i];
-    }
+        for (i = 0; i < cut; i++) {
+            child1->positions[i] = p1->positions[i];
+        }
     
-    for (i = cut; i < size; i++) {
-        child1->positions[i] = p2->positions[i];
-    }
+        for (i = cut; i < size; i++) {
+            child1->positions[i] = p2->positions[i];
+        }
     
-    for (i = 0; i < cut; i++) {
-        child2->positions[i] = p2->positions[i];
-    }
+        for (i = 0; i < cut; i++) {
+            child2->positions[i] = p2->positions[i];
+        }
     
-    for (i = cut; i < size; i++) {
-        child2->positions[i] = p1->positions[i];
+        for (i = cut; i < size; i++) {
+            child2->positions[i] = p1->positions[i];
+        }
+    
+    }else{
+        child1 = memcpy(child1, p1, sizeof(child1));
+        child2 = memcpy(child2, p2, sizeof(child2));
     }
     
     if(CROSSOVERREMOVEREPLICATION == 1){
