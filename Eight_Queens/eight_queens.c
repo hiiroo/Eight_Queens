@@ -12,11 +12,16 @@
 #include <time.h>
 #include "eight_queens.h"
 
+POS* init_positions(int size){
+    POS* temp = malloc(size * sizeof(POS_t));
+    return temp;
+}
+
 PARENT init_parent(int size){
     PARENT p = malloc(sizeof(PARENT_t));
     p->matchrate = 0;
     p->size = size;
-    p->positions = (POS*)malloc(size * sizeof(POS_t));
+    p->positions = (POS*)malloc(size * sizeof(POS));
     return p;
 }
 
@@ -414,6 +419,9 @@ void mutation(PARENT p){
 
 void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2){
     
+    print_parent(p1);
+    print_parent(p2);
+    
     srand((int)time(NULL));
     
     int cut, i, size = p1->size;
@@ -425,24 +433,58 @@ void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2){
         cut = rand() % size;
     
         for (i = 0; i < cut; i++) {
-            child1->positions[i] = p1->positions[i];
+            child1->positions[i] = malloc(POPLIMIT * sizeof(POS_t));
+            POS temp = child1->positions[i];
+            
+            temp->x = p1->positions[i]->x;
+            temp->y = p1->positions[i]->y;
         }
     
         for (i = cut; i < size; i++) {
-            child1->positions[i] = p2->positions[i];
+            
+            child1->positions[i] = malloc(POPLIMIT * sizeof(POS_t));
+            POS temp = child1->positions[i];
+            
+            temp->x = p2->positions[i]->x;
+            temp->y = p2->positions[i]->y;
+
+            
+//            child1->positions[i]->x = p2->positions[i]->x;
+//            child1->positions[i]->y = p2->positions[i]->y;
         }
     
         for (i = 0; i < cut; i++) {
-            child2->positions[i] = p2->positions[i];
+            
+            child2->positions[i] = malloc(POPLIMIT * sizeof(POS_t));
+            POS temp = child2->positions[i];
+            
+            temp->x = p2->positions[i]->x;
+            temp->y = p2->positions[i]->y;
+            
+//            child2->positions[i]->x = p2->positions[i]->x;
+//            child2->positions[i]->y = p2->positions[i]->y;
         }
     
         for (i = cut; i < size; i++) {
-            child2->positions[i] = p1->positions[i];
+            
+            child2->positions[i] = malloc(POPLIMIT * sizeof(POS_t));                
+            POS temp = child2->positions[i];
+            
+            temp->x = p1->positions[i]->x;
+            temp->y = p1->positions[i]->y;
+            
+//            child2->positions[i]->x = p1->positions[i]->x;
+//            child2->positions[i]->y = p1->positions[i]->y;
         }
     
     }else{
-        child1 = memcpy(child1, p1, sizeof(child1));
-        child2 = memcpy(child2, p2, sizeof(child2));
+        int i;
+        
+        for (i = 0; i < child1->size; i++) {
+            child1->positions[i] = p1->positions[i];
+            child2->positions[i] = p2->positions[i];
+        }
+        
     }
     
     if(CROSSOVERREMOVEREPLICATION == 1){
@@ -465,15 +507,12 @@ void environment(POPULATION population){
         
         POPULATION temppop = init_population(POPULATION_SIZE);
         
-        for (i = 0; i < population->size -1 ; i++) {
+        for (i = 0; i < population->size -1; i = i + 2) {
             
             POOL tournamentpool = init_tournament_pool(population);
             
             PARENT tpar1 = NULL;
             PARENT tpar2 = NULL;
-            PARENT tempmax = NULL;
-            //Tournament Selection Part
-            tempmax = population_maximum((POPULATION)tournamentpool);
             
             tpar1 = population_minimumrate((POPULATION)tournamentpool);
             
@@ -493,10 +532,13 @@ void environment(POPULATION population){
             
             crossover(tpar1, tpar2, child1, child2);
             
+            print_parent(child1);
+            print_parent(child2);
+            
             int rate1 = child1->matchrate;
             int rate2 = child2->matchrate;
             
-            if (rate1 < MIN){//RATING
+            if (rate1 <= MIN){//RATING
                 
                 if (HILLCLIMB == 1) {
                 
@@ -518,7 +560,7 @@ void environment(POPULATION population){
                 }
                 
                 MIN = rate1;
-                print_parent(child1);
+//                print_parent(child1);
                 
                 
             }else{
@@ -527,7 +569,7 @@ void environment(POPULATION population){
             	}
             }//END
             
-            if (rate2 < MIN) {//RATING
+            if (rate2 <= MIN) {//RATING
 
                 if (HILLCLIMB == 1) {
                     
@@ -549,7 +591,7 @@ void environment(POPULATION population){
                 }
                 
                 MIN = rate2;
-                print_parent(child2);
+//                print_parent(child2);
                 
             }else{
             	if(MUTATION == 1){
@@ -574,7 +616,6 @@ void environment(POPULATION population){
         }
         popaverage = population_average(temppop);
          
-        //        printf("Population Maximum:%d\n", population_minimumrate(population)->matchrate);
         printf("GENERATION: %d - POPULATION AVERAGE: %f\n", gencount,population_average(population));
         
         free_population(population);

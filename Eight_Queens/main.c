@@ -20,6 +20,9 @@ int main()
     
     environment(population);
     
+    printf("%d", sizeof(POPULATION_t));
+    printf("%d", sizeof(PARENT_t));
+    
     /*
      int i;
      int ref[8][2] = {{8,4}, {7,7}, {6,3}, {5,8}, {4,2}, {3,5}, {2,1}, {1, 6}};
