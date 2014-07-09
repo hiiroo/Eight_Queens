@@ -40,13 +40,15 @@ void free_population(POPULATION p){
     
     for (k = 0; k < popsize; k++) {
         PARENT temp = p->pop[k];
-        if (sizeof(temp) > sizeof(PARENT_t)) {
+        if (sizeof(temp) >= sizeof(PARENT_t)) {
             free(temp->positions);
             free(temp);
         }
     }
-    free(p->pop);
-    free(p);
+    if(sizeof(p) >= sizeof(POPULATION_t)){
+        free(p->pop);
+        free(p);
+    }
 }
 
 void create_random_population(POPULATION p){
@@ -415,7 +417,8 @@ void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2){
     srand((int)time(NULL));
     
     int cut, i, size = p1->size;
-    double localcrsvrrate = rand() % 1;
+    double localcrsvrrate = rand() % 100;
+    localcrsvrrate = localcrsvrrate / 100;
     
     if (CROSSOVERRATE > localcrsvrrate) {
     
@@ -493,25 +496,66 @@ void environment(POPULATION population){
             int rate1 = child1->matchrate;
             int rate2 = child2->matchrate;
             
-            if (rate1 < MIN){
+            if (rate1 < MIN){//RATING
+                
+                if (HILLCLIMB == 1) {
+                
+                    PARENT temp = init_parent(POPLIMIT);
+                    memcpy(temp, child1, sizeof(PARENT_t));
+                
+                    remove_replication(temp);
+                
+                    if((temp->matchrate < rate1) || (temp == SUCCESS)){
+                        success = 1;
+                        printf("Child 1 - Solution found by hillclimb.\n");
+                        print_parent(child1);
+                    
+                        free(temp->positions);
+                        free(temp);
+                    
+                        break;
+                    }
+                }
+                
                 MIN = rate1;
                 print_parent(child1);
-                break;
+                
+                
             }else{
             	if(MUTATION == 1){
             		mutation(child1);
             	}
-            }
+            }//END
             
-            if (rate2 < MIN) {
+            if (rate2 < MIN) {//RATING
+
+                if (HILLCLIMB == 1) {
+                    
+                    PARENT temp = init_parent(POPLIMIT);
+                    memcpy(temp, child2, sizeof(PARENT_t));
+                
+                    remove_replication(temp);
+                
+                    if((temp->matchrate < rate2) || (temp == SUCCESS)){
+                        success = 1;
+                        printf("Child 2 - Solution found by hillclimb.\n");
+                        print_parent(child1);
+                    
+                        free(temp->positions);
+                        free(temp);
+                    
+                        break;
+                    }
+                }
+                
                 MIN = rate2;
                 print_parent(child2);
-                break;
+                
             }else{
             	if(MUTATION == 1){
             		mutation(child2);
             	}
-            }
+            }//END
             
             if(child1->matchrate == SUCCESS){
                 success = 1;
