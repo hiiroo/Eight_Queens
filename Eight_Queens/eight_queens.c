@@ -14,6 +14,12 @@
 
 POS* init_positions(int size){
     POS* temp = malloc(size * sizeof(POS_t));
+    
+    int i;
+    for (i = 0; i < size; i++) {
+        temp[i] = malloc(sizeof(POS_t));
+    }
+    
     return temp;
 }
 
@@ -21,7 +27,7 @@ PARENT init_parent(int size){
     PARENT p = malloc(sizeof(PARENT_t));
     p->matchrate = 0;
     p->size = size;
-    p->positions = (POS*)malloc(size * sizeof(POS));
+    p->positions = init_positions(size);
     return p;
 }
 
@@ -31,13 +37,33 @@ POPULATION init_population(int size){
     
     POPULATION temp = malloc(sizeof(POPULATION_t));
     temp->size = size;
-    temp->pop = malloc(size*sizeof(PARENT));
+    temp->pop = malloc(size*sizeof(PARENT_t));
     
     for (i = 0; i < size; i++) {
         temp->pop[i] = init_parent(POPLIMIT);
     }
     
     return temp;
+}
+
+PARENT copy_parent(PARENT p1){
+    
+    int i;
+    
+    PARENT p2 = malloc(sizeof(PARENT_t));
+    p2->size = POPLIMIT;
+    p2->positions = malloc(POPLIMIT*sizeof(POS_t));
+    
+    for (i = 0; i < POPLIMIT; i++) {
+        p2->positions[i] = malloc(sizeof(POS_t));
+        p2->positions[i]->x = p1->positions[i]->x;
+        p2->positions[i]->y = p1->positions[i]->y;
+    }
+    
+    p2->matchrate = evaluate(p2);
+
+    
+    return p2;
 }
 
 void free_population(POPULATION p){
@@ -509,13 +535,18 @@ void environment(POPULATION population){
         
         for (i = 0; i < population->size -1; i = i + 2) {
             
+            print_population(population);
+            
             POPULATION tournamentpool = init_tournament_pool(population);
+            
+            printf("TOURNAMENT POOL\n");
+            print_population(tournamentpool);
             
             PARENT tpar1 = NULL;
             PARENT tpar2 = NULL;
             
-            tpar1 = population_minimumrate((POPULATION)tournamentpool);
-            tpar2 = population_maximum((POPULATION)tournamentpool);
+            tpar1 = population_minimumrate(tournamentpool);
+            tpar2 = population_maximum(tournamentpool);
             
             int p, min = 0;
             for (p = 0; p < tournamentpool->size; p++) {
@@ -533,9 +564,6 @@ void environment(POPULATION population){
             
             crossover(tpar1, tpar2, child1, child2);
             
-            print_parent(child1);
-            print_parent(child2);
-            
             int rate1 = child1->matchrate;
             int rate2 = child2->matchrate;
             
@@ -543,15 +571,15 @@ void environment(POPULATION population){
                 
                 if (HILLCLIMB == 1) {
                 
-                    PARENT temp = init_parent(POPLIMIT);
-                    memcpy(temp, child1, sizeof(PARENT_t));
+                    PARENT temp = copy_parent(child1);
+//                    memcpy(temp, child1, sizeof(PARENT_t));
                 
                     remove_replication(temp);
                 
                     if((temp->matchrate < rate1) || (temp == SUCCESS)){
                         success = 1;
                         printf("Child 1 - Solution found by hillclimb.\n");
-                        print_parent(child1);
+                        print_parent(temp);
                     
                         free(temp->positions);
                         free(temp);
@@ -561,8 +589,6 @@ void environment(POPULATION population){
                 }
                 
                 MIN = rate1;
-//                print_parent(child1);
-                
                 
             }else{
             	if(MUTATION == 1){
@@ -574,15 +600,15 @@ void environment(POPULATION population){
 
                 if (HILLCLIMB == 1) {
                     
-                    PARENT temp = init_parent(POPLIMIT);
-                    memcpy(temp, child2, sizeof(PARENT_t));
+                    PARENT temp = copy_parent(child2);//init_parent(POPLIMIT);
+//                    memcpy(temp, child2, sizeof(PARENT_t));
                 
                     remove_replication(temp);
                 
                     if((temp->matchrate < rate2) || (temp == SUCCESS)){
                         success = 1;
                         printf("Child 2 - Solution found by hillclimb.\n");
-                        print_parent(child1);
+                        print_parent(temp);
                     
                         free(temp->positions);
                         free(temp);
@@ -592,7 +618,6 @@ void environment(POPULATION population){
                 }
                 
                 MIN = rate2;
-//                print_parent(child2);
                 
             }else{
             	if(MUTATION == 1){
@@ -629,19 +654,19 @@ void environment(POPULATION population){
 }
 
 POPULATION init_tournament_pool(POPULATION p){
-//            srand((int)time(NULL));
     
-//    POOL temp = (POOL)init_population(TOURNAMENTSIZE);
-    POPULATION temp = init_population(TOURNAMENTSIZE);
+    POPULATION temp = malloc(sizeof(POPULATION_t));
+    temp->size = TOURNAMENTSIZE;
+    temp->pop = malloc(TOURNAMENTSIZE*sizeof(PARENT_t));
     
     int i;
     int selectionStart;// = rand() % POPLIMIT;
     
     for (i = 0; i < TOURNAMENTSIZE; i++) {
-        selectionStart = rand() % (POPLIMIT + 1);
-        temp->pop[i] = p->pop[selectionStart];
-        printf("%d selected\n\n", selectionStart);
+        selectionStart = rand() % (POPLIMIT);
+        temp->pop[i] = copy_parent(p->pop[selectionStart]);
     }
+    
     return temp;
 }
 

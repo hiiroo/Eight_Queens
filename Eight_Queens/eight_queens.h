@@ -56,6 +56,7 @@ typedef struct POOL_s{//pool struct for tournament selection
 
 PARENT init_parent(int size);
 POPULATION init_population(int size);
+PARENT copy_parent(PARENT p1);
 int evaluate(PARENT p);//evaluation function
 void mutation(PARENT p);//mutation procedure
 void print_parent(PARENT p);//prints specified parent
