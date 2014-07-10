@@ -60,7 +60,7 @@ void create_random_population(POPULATION p){
     
     int i, j;
     
-    srand((int)time(NULL));
+//    srand((int)time(NULL));
     
     for (i = 0; i < p->size; i++) {
         PARENT temp = p->pop[i];
@@ -392,7 +392,7 @@ void population_remove(POPULATION population, PARENT p){
 
 void mutation(PARENT p){
     
-    srand((int)time(NULL));
+//    srand((int)time(NULL));
     
     int psize = p->size, i, val1, val2;
     for (i = 0; i < psize*MUTATIONRATE; i++) {
@@ -422,7 +422,7 @@ void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2){
     print_parent(p1);
     print_parent(p2);
     
-    srand((int)time(NULL));
+//    srand((int)time(NULL));
     
     int cut, i, size = p1->size;
     double localcrsvrrate = rand() % 100;
@@ -501,7 +501,7 @@ void environment(POPULATION population){
     int gencount = 0, i, popaverage = 0, success = 0, MIN = MATCHRATETHRESHOLD;
     popaverage = population_average(population);
     
-    srand((int)time(NULL));
+//    srand((int)time(NULL));
     
     while ((success != 1) && (popaverage > EXPECTATION) && (gencount <= GENERATIONLIMIT)) {
         
@@ -509,17 +509,18 @@ void environment(POPULATION population){
         
         for (i = 0; i < population->size -1; i = i + 2) {
             
-            POOL tournamentpool = init_tournament_pool(population);
+            POPULATION tournamentpool = init_tournament_pool(population);
             
             PARENT tpar1 = NULL;
             PARENT tpar2 = NULL;
             
             tpar1 = population_minimumrate((POPULATION)tournamentpool);
+            tpar2 = population_maximum((POPULATION)tournamentpool);
             
             int p, min = 0;
             for (p = 0; p < tournamentpool->size; p++) {
-                if((tournamentpool->pool[p]->matchrate >= min) && (tournamentpool->pool[p]->positions != tpar1->positions)){//I will continue later
-                    tpar2 = tournamentpool->pool[p];
+                if((tournamentpool->pop[p]->matchrate >= min) && (tournamentpool->pop[p]->positions != tpar1->positions)){//I will continue later
+                    tpar2 = tournamentpool->pop[p];
                 }
             }
             //end
@@ -627,15 +628,19 @@ void environment(POPULATION population){
     
 }
 
-POOL init_tournament_pool(POPULATION p){
-    srand((int)time(NULL));
+POPULATION init_tournament_pool(POPULATION p){
+//            srand((int)time(NULL));
     
-    POOL temp = (POOL)init_population(TOURNAMENTSIZE);
+//    POOL temp = (POOL)init_population(TOURNAMENTSIZE);
+    POPULATION temp = init_population(TOURNAMENTSIZE);
     
     int i;
+    int selectionStart;// = rand() % POPLIMIT;
     
-    for (i = 0; i < temp->size; i++) {
-        temp->pool[i] = p->pop[(rand() % p->size)];
+    for (i = 0; i < TOURNAMENTSIZE; i++) {
+        selectionStart = rand() % (POPLIMIT + 1);
+        temp->pop[i] = p->pop[selectionStart];
+        printf("%d selected\n\n", selectionStart);
     }
     return temp;
 }

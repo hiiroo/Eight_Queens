@@ -13,6 +13,7 @@
 
 int main()
 {
+    srand((int)time(NULL));
     
     POPULATION population = init_population(POPULATION_SIZE);
     
@@ -20,8 +21,8 @@ int main()
     
     environment(population);
     
-    printf("%d", sizeof(POPULATION_t));
-    printf("%d", sizeof(PARENT_t));
+//    printf("%d", sizeof(POPULATION_t));
+//    printf("%d", sizeof(PARENT_t));
     
     /*
      int i;

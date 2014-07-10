@@ -70,7 +70,7 @@ double population_average(POPULATION p);//population of average
 PARENT population_maximum(POPULATION p);//***OLD*** return maximum matchrated parent in population
 PARENT population_minimumrate(POPULATION p);//updated one
 void environment(POPULATION population);//Main loop of selection and desicion mechanism
-POOL init_tournament_pool(POPULATION p);//initiates tournament pool from given population
+POPULATION init_tournament_pool(POPULATION p);//initiates tournament pool from given population
 ROULETTE roulette_array(POPULATION population);//creates roulette array
 void tournament_selection(POOL pool, PARENT popfirst, PARENT popsecond);//it is not actively used
 void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2);//one point crossover returns two childs
