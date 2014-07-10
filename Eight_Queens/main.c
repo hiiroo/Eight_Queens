@@ -41,4 +41,3 @@ int main()
     free_population(population);
     return 0;
 }
-

@@ -12,18 +12,18 @@
 
 #define EVALUATEDEBUGMODE 0//Debug mode
 #define POPLIMIT 8//Size of points that every parent contains
-#define POPULATION_SIZE 5//Size of population
+#define POPULATION_SIZE 20//Size of population
 #define TOURNAMENTSIZE 3//size of tournament for selection
 #define SUCCESS 0//Defined successful evaluation value
 #define EXPECTATION 0//Expectation
 #define MATCHRATETHRESHOLD 1//minimum expectation from recombination
-#define GENERATIONLIMIT 10//100000//maximum number of generation will pass
-#define CROSSOVERRATE 1 //Probability of crossover to happen
-#define HILLCLIMB 0 //Enable(1)/Disable(0) hill climb
-#define MUTATION 0//Enable(1)/Disable(0) Mutation
-#define MUTATIONRATE 0.5//Number of mutations will happen in loop
-#define MUTATIONREMOVEREPLICATION 0//remove replications in positions after mutation operation
-#define CROSSOVERREMOVEREPLICATION 0//remove replications in positions after crossover operation
+#define GENERATIONLIMIT 100//100000//maximum number of generation will pass
+#define CROSSOVERRATE 0.9 //Probability of crossover to happen
+#define HILLCLIMB 1 //Enable(1)/Disable(0) hill climb
+#define MUTATION 1//Enable(1)/Disable(0) Mutation
+#define MUTATIONRATE 0.6//Number of mutations will happen in loop
+#define MUTATIONREMOVEREPLICATION 1//remove replications in positions after mutation operation
+#define CROSSOVERREMOVEREPLICATION 1//remove replications in positions after crossover operation
 
 #define ROULTTESIZE 100//size of roulette for probabilistic distribution of parent pointers
 

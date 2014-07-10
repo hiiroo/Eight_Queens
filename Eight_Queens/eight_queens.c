@@ -58,10 +58,16 @@ PARENT copy_parent(PARENT p1){
         p2->positions[i] = malloc(sizeof(POS_t));
         p2->positions[i]->x = p1->positions[i]->x;
         p2->positions[i]->y = p1->positions[i]->y;
+        
+        if(p2->positions[i]->x == 0 && p2->positions[i]->y == 0){
+        	printf("Anomally Detected at %d\n", i);
+        	print_parent(p1);
+        }
+        
     }
     
     p2->matchrate = evaluate(p2);
-
+    
     
     return p2;
 }
@@ -194,7 +200,11 @@ int evaluate(PARENT p){
     
     //Fill bitmap
     for(k = 0; k < size; k++){
-    	bitmap[p->positions[k]->x][p->positions[k]->y] = 1;
+    	if(bitmap[p->positions[k]->x][p->positions[k]->y] > 0){
+    		matchrate = matchrate + bitmap[p->positions[k]->x][p->positions[k]->y];
+    	}else{
+    		bitmap[p->positions[k]->x][p->positions[k]->y] = 1;
+    	}
     }
     //
     
@@ -212,8 +222,8 @@ int evaluate(PARENT p){
     //Check horizontal and vertical axis for collisions
     int bincnt = 0;
     
-    for(i = 0; i < size ; i++){
-    	for(k = 0; k < size; k++){
+    for(i = 1; i < size ; i++){
+    	for(k = 1; k < size; k++){
     		bincnt = bincnt + bitmap[i][k];
     	}
     	if(bincnt > 1){
@@ -222,11 +232,28 @@ int evaluate(PARENT p){
     		}
     		matchrate++;
     	}
-        //    	else if(bincnt < 1){
-        //    		matchrate++;
-        //    	}
+        else if(bincnt < 1){
+        	matchrate++;
+        }
     	bincnt = 0;
     }
+    
+    for(i = 1; i < size ; i++){
+    	for(k = 1; k < size; k++){
+    		bincnt = bincnt + bitmap[k][i];
+    	}
+    	if(bincnt > 1){
+    		if(EVALUATEDEBUGMODE == 1){
+    			printf("Collision at line of %d,%d\n", i,k);
+    		}
+    		matchrate++;
+    	}
+    	else if(bincnt < 1){
+    		matchrate++;
+    	}
+    	bincnt = 0;
+    }
+    
     //
     
     bincnt = 0;
@@ -446,47 +473,47 @@ void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2){
     localcrsvrrate = localcrsvrrate / 100;
     
     if (CROSSOVERRATE > localcrsvrrate) {
-    
+        
         cut = rand() % size;
-    
+        
         for (i = 0; i < cut; i++) {
-            child1->positions[i] = malloc(POPLIMIT * sizeof(POS_t));
+            child1->positions[i] = malloc(sizeof(POS_t));
             POS temp = child1->positions[i];
             
             temp->x = p1->positions[i]->x;
             temp->y = p1->positions[i]->y;
         }
-    
+        
         for (i = cut; i < size; i++) {
             
-            child1->positions[i] = malloc(POPLIMIT * sizeof(POS_t));
+            child1->positions[i] = malloc(sizeof(POS_t));
             POS temp = child1->positions[i];
             
             temp->x = p2->positions[i]->x;
             temp->y = p2->positions[i]->y;
-
+            
         }
-    
+        
         for (i = 0; i < cut; i++) {
             
-            child2->positions[i] = malloc(POPLIMIT * sizeof(POS_t));
+            child2->positions[i] = malloc(sizeof(POS_t));
             POS temp = child2->positions[i];
             
             temp->x = p2->positions[i]->x;
             temp->y = p2->positions[i]->y;
             
         }
-    
+        
         for (i = cut; i < size; i++) {
             
-            child2->positions[i] = malloc(POPLIMIT * sizeof(POS_t));                
+            child2->positions[i] = malloc(sizeof(POS_t));                
             POS temp = child2->positions[i];
             
             temp->x = p1->positions[i]->x;
             temp->y = p1->positions[i]->y;
-
+            
         }
-    
+        
     }else{
         int i;
         
@@ -511,20 +538,18 @@ void environment(POPULATION population){
     int gencount = 0, i, popaverage = 0, success = 0, MIN = MATCHRATETHRESHOLD;
     popaverage = population_average(population);
     
-//    srand((int)time(NULL));
-    
     while ((success != 1) && (popaverage > EXPECTATION) && (gencount <= GENERATIONLIMIT)) {
         
         POPULATION temppop = init_population(POPULATION_SIZE);
         
-        for (i = 0; i < population->size -1; i = i + 2) {
+        for (i = 0; i < population->size; i = i + 2) {
             
-//            print_population(population);
+            //            print_population(population);
             
             POPULATION tournamentpool = init_tournament_pool(population);
             
-//            printf("TOURNAMENT POOL\n");
-//            print_population(tournamentpool);
+            //            printf("TOURNAMENT POOL\n");
+            //            print_population(tournamentpool);
             
             PARENT tpar1 = NULL;
             PARENT tpar2 = NULL;
@@ -554,20 +579,19 @@ void environment(POPULATION population){
             if (rate1 <= MIN){//RATING
                 
                 if (HILLCLIMB == 1) {
-                
+                    
                     PARENT temp = copy_parent(child1);
-//                    memcpy(temp, child1, sizeof(PARENT_t));
-                
+                    
                     remove_replication(temp);
-                
+                    
                     if((temp->matchrate < rate1) || (temp == SUCCESS)){
                         success = 1;
                         printf("Child 1 - Solution found by hillclimb.\n");
                         print_parent(temp);
-                    
+                        
                         free(temp->positions);
                         free(temp);
-                    
+                        
                         break;
                     }
                 }
@@ -581,22 +605,21 @@ void environment(POPULATION population){
             }//END
             
             if (rate2 <= MIN) {//RATING
-
+                
                 if (HILLCLIMB == 1) {
                     
                     PARENT temp = copy_parent(child2);//init_parent(POPLIMIT);
-//                    memcpy(temp, child2, sizeof(PARENT_t));
-                
+                    
                     remove_replication(temp);
-                
+                    
                     if((temp->matchrate < rate2) || (temp == SUCCESS)){
                         success = 1;
                         printf("Child 2 - Solution found by hillclimb.\n");
                         print_parent(temp);
-                    
+                        
                         free(temp->positions);
                         free(temp);
-                    
+                        
                         break;
                     }
                 }
@@ -625,7 +648,7 @@ void environment(POPULATION population){
             temppop->pop[i+1] = child2;
         }
         popaverage = population_average(temppop);
-         
+        
         printf("GENERATION: %d - POPULATION AVERAGE: %f\n", gencount,population_average(population));
         
         free_population(population);
