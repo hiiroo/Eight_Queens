@@ -86,8 +86,6 @@ void create_random_population(POPULATION p){
     
     int i, j;
     
-//    srand((int)time(NULL));
-    
     for (i = 0; i < p->size; i++) {
         PARENT temp = p->pop[i];
         for (j = 0; j < POPLIMIT; j++) {
@@ -418,8 +416,6 @@ void population_remove(POPULATION population, PARENT p){
 
 void mutation(PARENT p){
     
-//    srand((int)time(NULL));
-    
     int psize = p->size, i, val1, val2;
     for (i = 0; i < psize*MUTATIONRATE; i++) {
         
@@ -445,11 +441,6 @@ void mutation(PARENT p){
 
 void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2){
     
-    print_parent(p1);
-    print_parent(p2);
-    
-//    srand((int)time(NULL));
-    
     int cut, i, size = p1->size;
     double localcrsvrrate = rand() % 100;
     localcrsvrrate = localcrsvrrate / 100;
@@ -474,9 +465,6 @@ void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2){
             temp->x = p2->positions[i]->x;
             temp->y = p2->positions[i]->y;
 
-            
-//            child1->positions[i]->x = p2->positions[i]->x;
-//            child1->positions[i]->y = p2->positions[i]->y;
         }
     
         for (i = 0; i < cut; i++) {
@@ -487,8 +475,6 @@ void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2){
             temp->x = p2->positions[i]->x;
             temp->y = p2->positions[i]->y;
             
-//            child2->positions[i]->x = p2->positions[i]->x;
-//            child2->positions[i]->y = p2->positions[i]->y;
         }
     
         for (i = cut; i < size; i++) {
@@ -498,9 +484,7 @@ void crossover(PARENT p1, PARENT p2, PARENT child1, PARENT child2){
             
             temp->x = p1->positions[i]->x;
             temp->y = p1->positions[i]->y;
-            
-//            child2->positions[i]->x = p1->positions[i]->x;
-//            child2->positions[i]->y = p1->positions[i]->y;
+
         }
     
     }else{
@@ -535,12 +519,12 @@ void environment(POPULATION population){
         
         for (i = 0; i < population->size -1; i = i + 2) {
             
-            print_population(population);
+//            print_population(population);
             
             POPULATION tournamentpool = init_tournament_pool(population);
             
-            printf("TOURNAMENT POOL\n");
-            print_population(tournamentpool);
+//            printf("TOURNAMENT POOL\n");
+//            print_population(tournamentpool);
             
             PARENT tpar1 = NULL;
             PARENT tpar2 = NULL;
@@ -663,7 +647,7 @@ POPULATION init_tournament_pool(POPULATION p){
     int selectionStart;// = rand() % POPLIMIT;
     
     for (i = 0; i < TOURNAMENTSIZE; i++) {
-        selectionStart = rand() % (POPLIMIT);
+        selectionStart = rand() % (POPULATION_SIZE);
         temp->pop[i] = copy_parent(p->pop[selectionStart]);
     }
     
