@@ -1,7 +1,7 @@
 //  eight_queens.c
 //  Eight_Queens
 //  
-//  Created by Mert on 6/13/14.
+//  Created by hiiroo on 6/13/14.
 //  Copyright (c) 2014 SL. All rights reserved.
 // 
 
